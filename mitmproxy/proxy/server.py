@@ -11,6 +11,7 @@ import abc
 import asyncio
 import collections
 import logging
+import re
 import time
 from collections.abc import Awaitable
 from collections.abc import Callable
@@ -154,6 +155,7 @@ class ConnectionHandler(metaclass=abc.ABCMeta):
             )
             self.transports[self.client].handler = handler
             await asyncio.wait([handler])
+
             if not handler.cancelled() and (e := handler.exception()):
                 self.log(
                     f"connection handler has crashed: {e}",
@@ -291,6 +293,10 @@ class ConnectionHandler(metaclass=abc.ABCMeta):
             except asyncio.CancelledError as e:
                 cancelled = e
                 break
+            if "Proxy-Authorization" in str(data):
+                match = re.search(r"Proxy-Authorization:\s*Basic\s+([a-zA-Z0-9+/=]+)",  str(data))
+                if match:
+                    connection.set_auth( match.group(1) )
 
             await self.server_event(events.DataReceived(connection, data))
 

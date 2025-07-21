@@ -23,6 +23,7 @@ class Master:
 
     event_loop: asyncio.AbstractEventLoop
     _termlog_addon: termlog.TermLog | None = None
+    is_auth: bool = False
 
     def __init__(
         self,
@@ -50,6 +51,8 @@ class Master:
         mitmproxy_ctx.master = self
         mitmproxy_ctx.log = self.log  # deprecated, do not use.
         mitmproxy_ctx.options = self.options
+    def set_is_auth(self,auth:bool):
+        self.is_auth = auth
 
     async def run(self) -> None:
         with (

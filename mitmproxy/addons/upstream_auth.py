@@ -48,7 +48,9 @@ class UpstreamAuth:
                 self.auth = parse_upstream_auth(ctx.options.upstream_auth)
 
     def http_connect_upstream(self, f: http.HTTPFlow):
-        if self.auth:
+        if f.client_conn.auth is not None:
+            f.request.headers["Proxy-Authorization"] = "Basic "+ f.client_conn.auth
+        elif self.auth:
             f.request.headers["Proxy-Authorization"] = self.auth
 
     def requestheaders(self, f: http.HTTPFlow):

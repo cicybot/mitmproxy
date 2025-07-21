@@ -70,6 +70,19 @@ class ProxyConnectionHandler(server.LiveConnectionHandler):
         with self.timeout_watchdog.disarm():
             # We currently only support single-argument hooks.
             (data,) = hook.args()
+            if self.master.is_auth is True and str(type(data)) == "<class 'mitmproxy.http.HTTPFlow'>" and self.client.auth is None:
+
+                writer = self.transports.pop(self.client).writer
+                if writer:
+                    writer.write(b"HTTP/1.1 407  Proxy Authentication Required\r\n")
+                    writer.write(b"Connection: keep-alive\r\n")
+                    writer.write(b"Keep-Alive: timeout=4\r\n")
+                    writer.write(b"Proxy-Authenticate: Basic\r\n")
+                    writer.write(b"Proxy-Connection: keep-alive\r\n")
+                    writer.write(b"Content-Length: 0\r\n\r\n")
+                    await writer.drain()
+                    writer.close()
+                return
             await self.master.addons.handle_lifecycle(hook)
             if isinstance(data, flow.Flow):
                 await data.wait_for_resume()  # pragma: no cover

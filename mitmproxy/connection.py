@@ -125,6 +125,10 @@ class Connection(serializable.SerializableDataclass, metaclass=ABCMeta):
     """*Timestamp:* Connection has been closed."""
     timestamp_tls_setup: float | None = None
     """*Timestamp:* TLS handshake has been completed successfully."""
+    auth: str | None = None
+
+    def set_auth(self,auth: str):
+        self.auth = auth
 
     @property
     def connected(self) -> bool:

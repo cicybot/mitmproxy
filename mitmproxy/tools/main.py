@@ -106,6 +106,8 @@ def run(
         except exceptions.OptionsError as e:
             print(f"{sys.argv[0]}: {e}", file=sys.stderr)
             sys.exit(1)
+        if args.upstream_auth is not None:
+            master.set_is_auth(True)
 
         loop = asyncio.get_running_loop()
 
