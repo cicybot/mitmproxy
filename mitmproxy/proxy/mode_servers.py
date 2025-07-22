@@ -74,7 +74,7 @@ class ProxyConnectionHandler(server.LiveConnectionHandler):
 
                 writer = self.transports.pop(self.client).writer
                 if writer:
-                    writer.write(b"HTTP/1.1 407  Proxy Authentication Required\r\n")
+                    writer.write(b"HTTP/1.1 407 Proxy Authentication Required\r\n")
                     writer.write(b"Connection: keep-alive\r\n")
                     writer.write(b"Keep-Alive: timeout=4\r\n")
                     writer.write(b"Proxy-Authenticate: Basic\r\n")

@@ -63,7 +63,7 @@ def run(
             logging.WARNING
         )  # aioquic uses a different prefix...
         debug.register_info_dumpers()
-
+        logging.info("[+] proxy is running...")
         opts = options.Options()
         master = master_cls(opts)
 
